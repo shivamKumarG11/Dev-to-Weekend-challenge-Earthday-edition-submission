@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  vox-atlas:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: terra-state-vox-atlas:latest
+    container_name: vox-atlas-engine
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/world"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # Scalability Architecture Note:
+  # To horizontally scale this project in production, the WorldEngine 
+  # in `core/engine.py` (which currently uses an in-memory threading.Lock)
+  # must be externalized to Redis so that multiple instances of this 
+  # container can share grid state seamlessly behind a Load Balancer.

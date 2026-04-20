@@ -1,0 +1,9 @@
+fastapi[standard]
+uvicorn[standard]
+pydantic>=2.0
+httpx
+PyJWT[crypto]
+google-genai
+snowflake-connector-python
+backboard-sdk
+python-dotenv

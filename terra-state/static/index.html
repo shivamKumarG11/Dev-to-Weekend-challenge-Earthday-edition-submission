@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="TERRA-STATE: VOX ATLAS - a 200x600 ecological simulation command portal.">
+  <title>TERRA-STATE: VOX ATLAS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Manrope:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div id="vox-app">
+
+  <div id="collapse-banner" hidden>
+    <span id="collapse-banner-text">DESERTIFICATION CASCADE</span>
+    <button id="collapse-banner-close" title="Dismiss">CLOSE</button>
+  </div>
+
+  <aside class="cockpit-sidebar">
+    <nav>
+      <ul class="cockpit-nav" role="navigation">
+        <li class="cockpit-nav__item active" data-tab="command" role="button" tabindex="0">COMMAND</li>
+        <li class="cockpit-nav__item" data-tab="vault" role="button" tabindex="0">VAULT</li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-runtime">
+      <div id="sys-status" class="sys-status running">
+        <span class="status-dot"></span>
+        LIVE
+      </div>
+
+      <div class="runtime-tick">TICK <span id="sidebar-tick">0</span></div>
+
+      <div class="speed-row">
+        <button class="speed-btn" data-speed="slow">0.5X</button>
+        <button class="speed-btn active" data-speed="normal">1X</button>
+        <button class="speed-btn" data-speed="fast">2.5X</button>
+      </div>
+
+      <div class="sidebar-btns">
+        <button class="btn btn--secondary" id="btn-pause">PAUSE</button>
+        <button class="btn btn--danger" id="btn-reset">RESET</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="cockpit-main">
+
+    <section id="tab-command" class="tab-panel active">
+      <div class="command-grid">
+
+        <div class="command-main">
+          <div class="metrics-strip">
+            <div class="metric-cell">
+              <div class="metric-lbl">WATER</div>
+              <div class="metric-val" id="val-W">--</div>
+              <div class="metric-bar-track"><div class="metric-bar" id="bar-W" style="width:0%"></div></div>
+            </div>
+            <div class="metric-cell">
+              <div class="metric-lbl">SOIL</div>
+              <div class="metric-val" id="val-S">--</div>
+              <div class="metric-bar-track"><div class="metric-bar" id="bar-S" style="width:0%"></div></div>
+            </div>
+            <div class="metric-cell">
+              <div class="metric-lbl">FOREST</div>
+              <div class="metric-val" id="val-F">--</div>
+              <div class="metric-bar-track"><div class="metric-bar" id="bar-F" style="width:0%"></div></div>
+            </div>
+            <div class="metric-cell">
+              <div class="metric-lbl">AGRI</div>
+              <div class="metric-val" id="val-A">--</div>
+              <div class="metric-bar-track"><div class="metric-bar" id="bar-A" style="width:0%"></div></div>
+            </div>
+            <div class="metric-cell">
+              <div class="metric-lbl">ECON</div>
+              <div class="metric-val" id="val-E">--</div>
+              <div class="metric-bar-track"><div class="metric-bar" id="bar-E" style="width:0%"></div></div>
+            </div>
+            <div class="metric-cell">
+              <div class="metric-lbl">CARBON</div>
+              <div class="metric-val" id="val-C">--</div>
+              <div class="metric-bar-track"><div class="metric-bar" id="bar-C" style="width:0%"></div></div>
+            </div>
+            <div class="metric-cell metric-cell--tick">
+              <div class="metric-lbl">FRAME</div>
+              <div class="metric-val" id="tick-display">0</div>
+              <div class="metric-bar-track"><div class="metric-bar" style="width:100%"></div></div>
+            </div>
+          </div>
+
+          <div class="canvas-area">
+            <div class="canvas-wrapper" id="canvas-wrapper">
+              <canvas id="world-canvas" aria-label="Interactive 200x600 World Matrix"></canvas>
+            </div>
+          </div>
+
+          <div class="event-log">
+            <div class="event-log__items" id="event-log-items">
+              <span class="event-log__empty">NO EVENTS</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="command-side">
+          <div class="welcome-panel">
+            <div class="welcome-title">Welcome to VOX ATLAS</div>
+            <div class="welcome-text">Watch feedback loops in motion. Click any tile for Oracle details.</div>
+          </div>
+          <div class="policy-panel">
+            <label class="policy-switch" for="policy-drought">
+              <input type="checkbox" id="policy-drought">
+              <span>DROUGHT LOCK</span>
+            </label>
+            <label class="policy-switch" for="policy-demand">
+              <input type="checkbox" id="policy-demand">
+              <span>MARKET SURGE</span>
+            </label>
+            <label class="policy-switch" for="policy-relief">
+              <input type="checkbox" id="policy-relief">
+              <span>RAIN RELIEF</span>
+            </label>
+          </div>
+
+          <div class="advisor-block">
+            <div class="advisor-actions">
+              <button class="btn btn--primary" id="btn-analyze">SYNC ORACLE</button>
+              <div id="advisor-alert-level" class="advisor-alert-level NOMINAL">NOMINAL</div>
+            </div>
+            <div class="advisor-terminal" id="advisor-terminal" aria-live="polite">
+              <span class="t-tick">TICK #0</span>
+              <span class="t-prompt"> ORACLE ></span>
+              <span class="t-report"> awaiting stream...</span>
+              <span class="t-cursor">_</span>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <section id="tab-vault" class="tab-panel" hidden>
+      <div class="vault-grid">
+
+        <div class="vault-card">
+          <div class="vault-row">
+            <span>SNOWFLAKE</span>
+            <span class="int-card__status" id="int-status-snowflake">MOCK</span>
+          </div>
+          <div class="vault-row">
+            <span>AUTH0</span>
+            <span class="int-card__status" id="int-status-auth0">MOCK</span>
+          </div>
+          <div class="vault-row">
+            <span>GEMINI</span>
+            <span class="int-card__status" id="int-status-gemini">MOCK</span>
+          </div>
+          <div class="vault-row">
+            <span>BACKBOARD</span>
+            <span class="int-card__status" id="int-status-bb">MOCK</span>
+          </div>
+        </div>
+
+        <div class="vault-card">
+          <div class="field-group">
+            <label class="field-label" for="int-auth0-input">AUTH0_DOMAIN</label>
+            <input type="text" id="int-auth0-input" class="field-input" placeholder="tenant.auth0.com">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="int-audience-input">AUTH0_AUDIENCE</label>
+            <input type="text" id="int-audience-input" class="field-input" placeholder="https://terra-state.api">
+          </div>
+          <div class="field-group field-actions">
+            <button class="btn btn--secondary" id="save-auth0-btn">SAVE AUTH0</button>
+            <span class="save-confirm" id="save-confirm-auth0" hidden>SAVED</span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="int-sf-input">SNOWFLAKE_ACCOUNT</label>
+            <input type="text" id="int-sf-input" class="field-input" placeholder="account.region.snowflakecomputing.com">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="int-sf-user">SNOWFLAKE_USER</label>
+            <input type="text" id="int-sf-user" class="field-input" placeholder="TERRA_USER">
+          </div>
+          <div class="field-group field-actions">
+            <button class="btn btn--secondary" id="save-snowflake-btn">SAVE SNOWFLAKE</button>
+            <span class="save-confirm" id="save-confirm-sf" hidden>SAVED</span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="int-gemini-input">GEMINI_API_KEY</label>
+            <input type="password" id="int-gemini-input" class="field-input" placeholder="AIza...">
+          </div>
+          <div class="field-group field-actions">
+            <button class="btn btn--secondary" id="save-gemini-btn">SAVE GEMINI</button>
+            <span class="save-confirm" id="save-confirm-gemini" hidden>SAVED</span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="int-bb-input">BACKBOARD_API_KEY</label>
+            <input type="password" id="int-bb-input" class="field-input" placeholder="bb_live_...">
+          </div>
+          <div class="field-group field-actions">
+            <button class="btn btn--secondary" id="save-bb-btn">SAVE BACKBOARD</button>
+            <span class="save-confirm" id="save-confirm-bb" hidden>SAVED</span>
+          </div>
+        </div>
+
+        <div class="vault-card">
+          <div class="agent-form">
+            <div class="agent-form__row agent-form__row--two">
+              <div>
+                <label class="field-label" for="agent-id-input">AGENT_ID</label>
+                <input type="text" id="agent-id-input" class="field-input" placeholder="agent-001">
+              </div>
+              <div>
+                <label class="field-label" for="agent-token-input">BEARER_TOKEN</label>
+                <input type="text" id="agent-token-input" class="field-input" placeholder="dev-token">
+              </div>
+            </div>
+
+            <div class="agent-form__row">
+              <div>
+                <label class="field-label" for="agent-action-select">ACTION</label>
+                <select id="agent-action-select" class="field-select">
+                  <option value="reforest">REFOREST</option>
+                  <option value="clear">CLEAR</option>
+                  <option value="develop">DEVELOP</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="agent-x-input">X</label>
+                <input type="number" id="agent-x-input" class="field-input" min="0" max="199" value="0">
+              </div>
+              <div>
+                <label class="field-label" for="agent-y-input">Y</label>
+                <input type="number" id="agent-y-input" class="field-input" min="0" max="599" value="0">
+              </div>
+            </div>
+
+            <div class="agent-form__actions">
+              <button class="btn btn--primary" id="btn-agent-submit">DISPATCH</button>
+              <span id="agent-result" class="agent-result"></span>
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table class="ledger-table">
+              <thead>
+                <tr>
+                  <th>Tick</th>
+                  <th>Agent</th>
+                  <th>Action</th>
+                  <th>X</th>
+                  <th>Y</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody id="agent-ledger-body">
+                <tr>
+                  <td colspan="6" style="text-align:center;">No agent actions yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="vault-card directives-card">
+          <p><strong>DIRECTIVE 1 (Meadows):</strong> "Feedback loops are the fundamental architecture of reality. Once a tipping point is crossed, momentum becomes destiny."</p>
+          <p><strong>DIRECTIVE 2 (Daly):</strong> "Infinite growth on a finite planet is a mathematical impossibility. The economy is a subsystem, not the master."</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div id="oracle-modal" hidden role="dialog" aria-modal="true" aria-labelledby="oracle-modal-title">
+    <div class="oracle-card">
+      <div class="oracle-header">
+        <div>
+          <div class="oracle-header__title" id="oracle-modal-title">ORACLE</div>
+          <div class="oracle-header__sub" id="oracle-position">Sector report</div>
+        </div>
+        <button id="oracle-close" title="Close">CLOSE</button>
+      </div>
+      <div class="oracle-body" id="oracle-body">
+        <div class="oracle-placeholder">Loading sector data...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/static/renderer.js"></script>
+<script src="/static/app.js"></script>
+
+</body>
+</html>
